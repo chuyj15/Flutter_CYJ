@@ -7,7 +7,7 @@ class SafeAreaWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //상태바 숨기기 (보통 메인에서 함)
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive, overlays: []);
+    // SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive, overlays: []);
 
     return SafeArea(
       top : true,
