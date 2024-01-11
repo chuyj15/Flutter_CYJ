@@ -11,74 +11,115 @@ class RefreshScreen extends StatefulWidget {
 }
 
 class _RefreshScreenState extends State<RefreshScreen> {
-  List<String> items = [
-    'item1',
-    'item2',
-    'item3',
-    'item1',
-    'item2',
-    'item3',
-    'item1',
-    'item2',
-    'item3',
-    'item1',
-    'item2',
-    'item3',
-    'item1',
-    'item2',
-    'item3',
-  ];
+
+  int _page = 1;
+  Map<String,dynamic> _pageObj = {'last':0};
+
+  List<String> items = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    fetch();
+
+  }
+
+  Future fetch() async {
+    print('fetch...');
+    // http 
+    // 1. URL 인코딩
+    // 2. GET 방식 요청
+    // final url = Uri.parse('https://jsonplaceholder.typicode.com/posts');
+
+    final url = Uri.parse('http://10.0.2.2:8080/board?page=${_page}');
+    final response = await http.get(url);
+
+    if( response.statusCode == 200 ) {
+      setState(() {
+        // JSON 문자열 ➡ List<>
+        var utf8Decoded = utf8.decode( response.bodyBytes );
+        var result = json.decode(utf8Decoded);
+        final page = result['page'];
+        final List list = result['list'];
+        // final List newData = json.decode(utf8Decoded);
+        print('page : ');
+        print(page);
+        _pageObj = page;
+
+        if( list.isEmpty ) return;
+        items = list.map<String>((item) {
+          final boardNo = item['boardNo'];
+          final title = item['title'];
+          return 'Item $boardNo - $title';
+        }).toList();
+
+        // 다음 페이지
+        _page++;
+      });
+    }
+
+  }
+
 
   Future _refresh() async {
-    //http
-    //1. url 인코딩
-    //2. GET 방식 요청
+    print('fetch...');
+    // http 
+    // 1. URL 인코딩
+    // 2. GET 방식 요청
     final url = Uri.parse('https://jsonplaceholder.typicode.com/posts');
     final response = await http.get(url);
-    if (response.statusCode == 200) {
+
+    if( response.statusCode == 200 ) {
       setState(() {
-        //jSON 문자열 -> List<>
+
+        // JSON 문자열 ➡ List<>
         final List newData = json.decode(response.body);
+
         List<String> newList = newData.map<String>((item) {
-          //item의 형식 : Map<String, ?>
-          // 요소 접근 : item.['key']
-          //그래서 item.id로 접근 안하고 item['id']로 접근합니다.
           final id = item['id'];
           final title = item['title'];
           return 'Item $id - $title';
         }).toList();
-        //map은 각각 item반복문도 돌고, List를 반환해줍니다.
+
         items = newList;
       });
     }
+    
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text('Pull Reload')),
-        body: RefreshIndicator(
-          onRefresh: _refresh,
+      appBar: AppBar(title: Text('Pull Reload'),),
+      body: 
+        RefreshIndicator(
+          onRefresh: fetch,
           child: ListView.builder(
-            // controller: _controller,
-            padding: EdgeInsets.all(8.0),
+            padding: EdgeInsets.all(8),
             itemBuilder: (context, index) {
-              if (index < items.length) {
+              if( index < items.length ){
                 final item = items[index];
-                return ListTile(
-                  title: Text(item),
-                );
-              } else {
-                return const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 40.0),
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ),
+                return ListTile(title: Text(item),);
+              }
+              else {
+                return ElevatedButton(
+                  onPressed: () {
+                    setState(() {
+                      _page = 1;
+                    });
+                    fetch();
+                  }, 
+                  child: const Text('처음으로 돌아가기')
                 );
               }
             },
-            itemCount: items.length + 1, //ProgressIndicator때문에 +1 해줌
+            itemCount: _page > _pageObj['last'] ? items.length+1 : items.length 
           ),
-        ));
+        )
+
+      
+      
+    );
   }
 }
