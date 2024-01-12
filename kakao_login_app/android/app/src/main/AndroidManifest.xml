@@ -1,8 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.joeun.kakao_login"
+ package="com.joeun.kakao_login"
 >
     <application
-        android:label="feed_app"
+        android:label="kakao_login_app"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
