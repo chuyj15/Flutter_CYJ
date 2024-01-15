@@ -21,7 +21,7 @@ class UserProvider extends ChangeNotifier {
       //loginWithKakaoTalk() : 카톡이 열리고, 카톡을 통해서 로그인
       // OAuthToken token = await UserApi.instance.loginWithKakaoTalk();
       print('로그인 성공...');
-      print('${token.accessToken}');
+      print('${token.accessToken}'); // pzrc2-dT3oYvgN7je1F6cwMXS6Qpggvv3AgKKwzSAAABjQqx0xCSBpCp5rpDbg
       _loginStat = true; // 로그인 여부 : true
 
       // 사용자 정보 가져오기 (메소드로 정의)
@@ -55,14 +55,17 @@ class UserProvider extends ChangeNotifier {
     try {
       _userInfo = await UserApi.instance.me(); //사용자 정보 요청
       print('사용자 정보 요청 성공');
+      print('userInfo : ${_userInfo}');
       print(
           'id : ${_userInfo?.id}'); //고유식별자. 카카오가 유저를 식별하기 위한 정보입니다. (진짜 아이디 아님)
-      print('nickname : ${_userInfo?.kakaoAccount?.name}');
-      print('nickname2 : ${_userInfo?.kakaoAccount?.profile?.nickname}');
-      print('nickname2 : ${_userInfo?.kakaoAccount?.profile?.profileImageUrl}');
+          //id : 3286576045
+      print('nickname : ${_userInfo?.kakaoAccount?.name}'); // nickname : null
+      print('nickname2 : ${_userInfo?.kakaoAccount?.profile?.nickname}'); // nickname2 : 윤주
+      print('nickname2 : ${_userInfo?.kakaoAccount?.profile?.profileImageUrl}'); //nickname2 : https://k.kakaocdn.net/dn/E3fIp/btsCCAcjLiq/nSoxvCNjdVxuREATpZeu20/img_640x640.jpg
     } catch (e) {
       print('사용자 정보 요청 실패 $e');
     }
+    notifyListeners();
   }
 
   //로그인 확인 ()
@@ -91,5 +94,15 @@ class UserProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  //
+  //로그아웃 메소드 만들기~
+  Future<void> kakaoLogout() async {
+    try {
+      await UserApi.instance.logout();
+      print('로그아웃 성공');
+      _loginStat = false;
+    } catch (e) {
+      print('로그아웃 실패');
+    }
+    notifyListeners();
+  }
 }
