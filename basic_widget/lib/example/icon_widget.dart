@@ -21,6 +21,7 @@ class IconWidget extends StatelessWidget {
                 Icon( Icons.touch_app,  size: 50,  color: Colors.green, ),
                 Icon( Icons.extension,  size: 50,  color: Colors.green, ),
                 Icon( Icons.rocket_launch,  size: 50,  color: Colors.green, ),
+                Icon( Icons.shopping_cart,  size: 50,  color: Colors.green, ),
               ],), 
               Divider(),
               Text("CRUD", style: TextStyle(fontSize: 20),),
