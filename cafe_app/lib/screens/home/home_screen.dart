@@ -139,6 +139,7 @@ class MyHomePage extends StatelessWidget {
                               child: GestureDetector(
                                 //클릭 시, 상세 화면 이동
                                 onTap: () {
+                                  //안녕
                                   Navigator.push(context, MaterialPageRoute(builder: (context)=> MenuDetailScreen(item : coffeeList[index])));
                                 },
                                 child: Padding(
